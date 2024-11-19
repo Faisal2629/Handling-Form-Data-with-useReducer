@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form with useReducer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f7f7f7;
+      }
+
+      .form-container {
+        text-align: center;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 300px;
+      }
+
+      .form-container input {
+        margin: 10px 0;
+        padding: 10px;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .form-container button {
+        margin: 10px 5px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .form-container button.submit {
+        background-color: #4caf50;
+        color: #fff;
+      }
+
+      .form-container button.submit:hover {
+        background-color: #45a049;
+      }
+
+      .form-container button.reset {
+        background-color: #f44336;
+        color: #fff;
+      }
+
+      .form-container button.reset:hover {
+        background-color: #e53935;
+      }
+
+      .details-container {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      const { useReducer } = React;
+
+      // Initial state for the form
+      const initialState = {
+        email: '',
+        password: '',
+        submitted: false,
+      };
+
+      // Reducer function
+      const reducer = (state, action) => {
+        switch (action.type) {
+          case 'email':
+            return { ...state, email: action.payload };
+          case 'password':
+            return { ...state, password: action.payload };
+          case 'submit':
+            return { ...state, submitted: true };
+          case 'reset':
+            return initialState;
+          default:
+            throw new Error('Invalid action type');
+        }
+      };
+
+      function FormWithUseReducer() {
+        const [state, dispatch] = useReducer(reducer, initialState);
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          if (state.email && state.password) {
+            dispatch({ type: 'submit' });
+          }
+        };
+
+        return (
+          <div className="form-container">
+            <h1>Form with useReducer</h1>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="email"
+                placeholder="Enter email"
+                value={state.email}
+                onChange={(e) =>
+                  dispatch({ type: 'email', payload: e.target.value })
+                }
+              />
+              <input
+                type="password"
+                placeholder="Enter password"
+                value={state.password}
+                onChange={(e) =>
+                  dispatch({ type: 'password', payload: e.target.value })
+                }
+              />
+              <button type="submit" className="submit">
+                Submit
+              </button>
+              <button
+                type="button"
+                className="reset"
+                onClick={() => dispatch({ type: 'reset' })}
+              >
+                Reset
+              </button>
+            </form>
+            <div className="details-container">
+              {state.submitted ? (
+                <div>
+                  <div>User Email: {state.email}</div>
+                  <div>User Password: {state.password}</div>
+                </div>
+              ) : (
+                <div>No details found</div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<FormWithUseReducer />);
+    </script>
+  </body>
+</html>
